@@ -5,9 +5,9 @@ RTL_SRCS 	:= $(shell find rtl -name '*.sv' -or -name '*.v')
 INCLUDE_DIRS := $(sort $(dir $(shell find . -name '*.svh')))
 RTL_DIRS	 := $(sort $(dir $(RTL_SRCS)))
 # Include both Include and RTL directories for linting
-LINT_INCLUDES := $(foreach dir, $(INCLUDE_DIRS) $(RTL_DIRS), -I$(realpath $(dir))) -I$(PDKPATH) 
+LINT_INCLUDES := $(foreach dir, $(INCLUDE_DIRS) $(RTL_DIRS), -I$(realpath $(dir))) -I$(PDKPATH)
 
-TEST_DIR = ./tests
+TEST_DIR = ./tb
 TEST_SUBDIRS = $(shell cd $(TEST_DIR) && ls -d */ | grep -v "__pycache__" )
 TESTS = $(TEST_SUBDIRS:/=)
 
@@ -15,7 +15,7 @@ TESTS = $(TEST_SUBDIRS:/=)
 LINTER := verilator
 SIMULATOR := verilator
 SIMULATOR_ARGS := --binary --timing --trace --trace-structs \
-	--assert --timescale 1ns --quiet  
+	--assert --timescale 1ns --quiet
 SIMULATOR_BINARY := ./obj_dir/V*
 SIMULATOR_SRCS := *.sv
 # Optional use of Icarus as Linter and Simulator
@@ -31,7 +31,7 @@ endif
 ifdef GL
 SIMULATOR := iverilog
 LINT_INCLUDES := -I$(PDKPATH) -I$(realpath gl)
-SIMULATOR_ARGS := -g2012 -DFUNCTIONAL -DUSE_POWER_PINS 
+SIMULATOR_ARGS := -g2012 -DFUNCTIONAL -DUSE_POWER_PINS
 SIMULATOR_BINARY := a.out
 SIMULATOR_SRCS = $(realpath gl)/* *.sv
 endif
@@ -55,7 +55,7 @@ all: lint_all tests
 lint: lint_all
 
 .PHONY: lint_all
-lint_all: 
+lint_all:
 	@printf "\n$(GREEN)$(BOLD) ----- Linting All Modules ----- $(RESET)\n"
 	@for src in $(RTL_SRCS); do \
 		top_module=$$(basename $$src .sv); \
@@ -76,12 +76,12 @@ lint_top:
 	$(LINTER) $(LINT_OPTS) --top-module $(TOP_MODULE) $(TOP_FILE)
 
 
-tests: $(TESTS) 
+tests: $(TESTS)
 
 tests/%: FORCE
 	make -s $(subst /,, $(basename $*))
 
-itests: 
+itests:
 	@ICARUS=1 make tests
 
 gl_tests:
@@ -93,14 +93,14 @@ gl_tests:
 	@GL=1 make tests
 
 .PHONY: $(TESTS)
-$(TESTS): 
+$(TESTS):
 	@printf "\n$(GREEN)$(BOLD) ----- Running Test: $@ ----- $(RESET)\n"
 	@printf "\n$(BOLD) Building with $(SIMULATOR)... $(RESET)\n"
 
 # Build With Simulator
 	@cd $(TEST_DIR)/$@;\
 		$(SIMULATOR) $(SIMULATOR_ARGS) $(SIMULATOR_SRCS) $(LINT_INCLUDES) $(SIM_TOP) > build.log
-	
+
 	@printf "\n$(BOLD) Running... $(RESET)\n"
 
 # Run Binary and Check for Error in Result
@@ -143,5 +143,5 @@ clean:
 	rm -rf `find tests -iname "obj_dir"`
 
 .PHONY: VERILOG_SOURCES
-VERILOG_SOURCES: 
+VERILOG_SOURCES:
 	@echo $(realpath $(RTL_SRCS))

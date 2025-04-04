@@ -2,7 +2,7 @@
 Welcome to your first lab in Open Source ASIC Design!
 
 # Getting Started
-At this point, you should have followed the [Docker Installation](https://github.com/Cal-Poly-Open-Source-ASIC-Class) instructions and have already cloned the [Asic Tools](https://github.com/Cal-Poly-Open-Source-ASIC-Class/asic-tools) repository. 
+At this point, you should have followed the [Docker Installation](https://github.com/Cal-Poly-Open-Source-ASIC-Class) instructions and have already cloned the [Asic Tools](https://github.com/Cal-Poly-Open-Source-ASIC-Class/asic-tools) repository.
 
 - Start by __using this template__, __not__ cloning it. This will create a copy that you own.
 - Then, clone __your copy__ into the `workspace`  folder. In other words, make sure you are in `~/workspace`, and then `git clone <your forked copy.git>`
@@ -18,7 +18,7 @@ At this point, you should have followed the [Docker Installation](https://github
 Your task is to design a Fibonacci accelerator.
 
 ### Setup
- Create a directory named `rtl`, and create a system verilog file inside it with a name ending in `.sv`. From within `lab1`, the path should be `rtl/<modulename>.sv`. 
+ Create a directory named `rtl`, and create a system verilog file inside it with a name ending in `.sv`. From within `lab1`, the path should be `rtl/<modulename>.sv`.
 
 > [!NOTE]
 > Any time you see a name in brackets, it means replace that name with your own. For example, `<module_name>.sv` would be replaced with `fib.sv` if your module is named `fib`.
@@ -33,7 +33,7 @@ Your task is to design a Fibonacci accelerator.
     - goes high when fib_in is valid, indicating to start a new calculation
     - Controlled by whatever device interacts with the accelerator, or by the testbench
 - `rdy_out`, ready out
-    - goes high when the accelerator's output has successfully been read from 
+    - goes high when the accelerator's output has successfully been read from
 
 ### System Outputs:
 - `rdy_in`, held high by the accelerator when it is ready to take a new input
@@ -77,7 +77,7 @@ make lint
 
 With your first draft design complete, it is time to test. Create a directory `tests/<testname>`. In that directory, create a test file. Your ultimate path should be `tests/<testname>/<testname>.sv`. Make sure the module name matches the file name as well.
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > It is important to put seperate tests in their own directories, as later on tests might involve more than one system verilog file. It would create quite a mess to have a bunch of semi-overlapping tests in the same directory.
 
 ### Simulate with Verilator, Manually
@@ -85,6 +85,7 @@ With your first draft design complete, it is time to test. Create a directory `t
 Now we can use verilator to compile and run our tests.
 ```
 verilator --timing --trace --binary tests/<testname>/<testname>.sv -I"rtl"
+clear && verilator --timing --trace --binary tests/tb_fib/tb_fib.sv  -I"rtl"
 ```
 > [!NOTE]
 > What are all these flags doing?
@@ -146,10 +147,10 @@ So you have a basic testbench and you can view waveforms.
 ```
 $assert (A == B) else $error("Failed. A: %d, B: %d", A, B);
 ```
-2. Use a __[task](https://vlsiverify.com/system-verilog/tasks/)__ to abstract the process of writing a value to the accelerator and reading its response. 
+2. Use a __[task](https://vlsiverify.com/system-verilog/tasks/)__ to abstract the process of writing a value to the accelerator and reading its response.
     - A task is like a function that can impact the simulation state. It can drive inputs and have delays.
     - Define it within the scope of the module, so that it can drive signals into your accelerator.
-3. Use a __[function](https://www.chipverify.com/systemverilog/systemverilog-functions)__ to compute the expected value of an Nth fibonacci number. 
+3. Use a __[function](https://www.chipverify.com/systemverilog/systemverilog-functions)__ to compute the expected value of an Nth fibonacci number.
 4. Use a for loop to compare the function and task outputs using an assert. This way, you can automatically test as many inputs as you want!
 
 # Deliverables
