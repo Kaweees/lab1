@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module fib #(
+module FibFSM #(
   parameter INPUT_WIDTH = 8,  // Width of input number
   parameter OUTPUT_WIDTH = 32 // Width of output result
 )(
